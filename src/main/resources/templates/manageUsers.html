@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Kullanıcıları Yönet</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col text-center">
+            <h1>Kullanıcıları Yönet</h1>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Ekleme Formu -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kullanıcı Ekle</h5>
+                    <form th:action="@{/manageUsers/addUser}" method="post">
+                        <div class="form-group">
+                            <label for="username">Kullanıcı Adı</label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Şifre</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Kullanıcı Ekle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kullanıcı Silme Formu -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Kullanıcı Sil</h5>
+                    <form th:action="@{/manageUsers/deleteUser}" method="post">
+                        <div class="form-group">
+                            <label for="id">Kullanıcı ID</label>
+                            <input type="text" class="form-control" id="id" name="id" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Kullanıcı Sil</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kullanıcı Listesi -->
+    <div class="row mt-5">
+        <div class="col">
+            <h3>Kullanıcı Listesi</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Kullanıcı Adı</th>
+                </tr>
+                </thead>
+                <tbody th:each="user : ${users}">
+                <tr>
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

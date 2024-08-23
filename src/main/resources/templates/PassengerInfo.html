@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilgilerinizi Giriniz</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #f6f6f6, #eaeaea);
+            color: #333;
+        }
+        .container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h4 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            color: #495057;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+        .form-control {
+            border-radius: 5px;
+        }
+        .custom-select {
+            border-radius: 5px;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container mt-5">
+    <h4 class="text-center">Yolcu Bilgileri</h4>
+    <input type="hidden" id="totalPassengers"
+           th:value="${(adultCount != null ? adultCount : 0) + (studentCount != null ? studentCount : 0) + (disabledCount != null ? disabledCount : 0)}">
+    <form th:action="@{/PassengerInfo}" th:object="${passengerDataModel}" method="post">
+        <div id="passengerForms"></div>
+        <div class="d-flex">
+            <button id="continueBtn" type="submit" hidden="hidden" class="btn btn-primary flex-fill me-2">İşleme Devam Et</button>
+            <button id="confirmBtn" type="button" class="btn btn-secondary flex-fill" onclick="manageInputs()">Onayla</button>
+        </div>
+
+
+        <input id="totalName" th:field="*{passengerNameArrString}" name="name" type="hidden">
+        <input id="totalSurname" th:field="*{passengerSurnameArrString}" name="surname" type="hidden">
+        <input id="totalBirthDate" th:field="*{passengerDateArrString}" name="birthdate" type="hidden">
+        <input id="totalGender" th:field="*{passengerGenderArrString}" name="totalGender" type="hidden">
+        <input id="totalPassportNo" th:field="*{passengerPassportArrString}" name="totalPassportNo" type="hidden">
+        <input id="totalTckNo" th:field="*{passengerNationalityArrString}" name="totalTckNo" type="hidden">
+        <input id="totalTelNo" th:field="*{passengerTelNoArrString}" name="totalTelNo" type="hidden">
+        <input id="totalEmail" th:field="*{passengerEmailArrString}" name="totalEmail" type="hidden">
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function addPassengerForms(totalPassengers) {
+        const formContainer = document.getElementById("passengerForms");
+
+        for (let i = 0; i < totalPassengers; i++) {
+            const formGroup = document.createElement("div");
+            formGroup.className = "form-group";
+            formGroup.innerHTML = `
+                    <h5>Yolcu ${i + 1}</h5>
+                    <label for="name${i}">İsim:</label>
+                    <input type="text" class="form-control" id="name${i}" name="passengers[${i}].passengerName" required placeholder="İsim girin">
+                    <label for="surname${i}">Soyisim:</label>
+                    <input type="text" class="form-control" id="surname${i}" name="passengers[${i}].passengerSurname" required placeholder="Soyisim girin">
+                    <label for="birthDate${i}">Doğum Tarihi:</label>
+                    <input type="date" class="form-control" id="birthDate${i}" name="passengers[${i}].passengerBirthdate" required>
+                    <label for="gender${i}">Cinsiyet:</label>
+                    <select class="form-control custom-select" id="gender${i}" name="passengers[${i}].passengergender" required>
+                        <option value="" disabled selected>Cinsiyet seçiniz</option>
+                        <option value="Female">Kadın</option>
+                        <option value="Male">Erkek</option>
+                    </select>
+                    <label for="passportNo${i}">Pasaport No:</label>
+                    <input type="text" class="form-control" id="passportNo${i}" name="passengers[${i}].passportno" required placeholder="Pasaport no girin" pattern="^\\d{9}$" maxlength="9" title="Pasaport numarası 9 haneli olmalıdır.">
+                    <label for="nationalityNo${i}">Vatandaşlık No:</label>
+                    <input type="text" class="form-control" id="nationalityNo${i}" name="passengers[${i}].passengertckno" required placeholder="Vatandaşlık no girin" pattern="^\\d{11}$" maxlength="11" title="T.C. Kimlik numarası 11 haneli olmalıdır.">
+                    <label for="telNo${i}">Tel No:</label>
+                    <input type="text" class="form-control" id="telNo${i}" name="passengers[${i}].passengertelno" required placeholder="Tel no girin" pattern="^\\d{11}$" maxlength="11" title="Telefon numarası 11 haneli olmalıdır.">
+                    <label for="email${i}">E-mail:</label>
+                    <input type="email" class="form-control" id="email${i}" name="passengers[${i}].passengerEmail" required placeholder="E-mail girin">
+                `;
+            formContainer.appendChild(formGroup);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const totalPassengers = document.getElementById("totalPassengers").value;
+        addPassengerForms(parseInt(totalPassengers, 10));
+    });
+
+
+    function combineFieldValues(fields) {
+        return Array.from(fields).map(field => field.value).join('&');
+    }
+
+    function manageInputs() {
+        //if tüm kutular doldu mu
+        const totalNameInput = document.getElementById('totalName');
+        const totalSurnameInput = document.getElementById('totalSurname');
+        const totalBirthDateInput = document.getElementById('totalBirthDate');
+        const totalGenderInput = document.getElementById('totalGender');
+        const totalPassportNoInput = document.getElementById('totalPassportNo');
+        const totalTckNoInput = document.getElementById('totalTckNo');
+        const totalTelNoInput = document.getElementById('totalTelNo');
+        const totalEmailInput = document.getElementById('totalEmail');
+
+
+        console.log(totalNameInput)
+        console.log(totalSurnameInput)
+        console.log(totalBirthDateInput)
+        console.log(totalGenderInput)
+        console.log(totalPassportNoInput)
+        console.log(totalTckNoInput)
+        console.log(totalTelNoInput)
+        console.log(totalEmailInput)
+
+
+
+        const nameFields = document.querySelectorAll('input[id^="name"]');
+        const surnameFields = document.querySelectorAll('input[id^="surname"]');
+        const birthDateFields = document.querySelectorAll('input[id^="birthDate"]');
+        const genderFields = document.querySelectorAll('select[id^="gender"]');
+        const passportNoFields = document.querySelectorAll('input[id^="passportNo"]');
+        const tckNoFields = document.querySelectorAll('input[id^="nationalityNo"]');
+        const telNoFields = document.querySelectorAll('input[id^="telNo"]');
+        const emailFields = document.querySelectorAll('input[id^="email"]');
+
+
+
+        totalNameInput.value = combineFieldValues(nameFields)
+        totalSurnameInput.value = combineFieldValues(surnameFields)
+        totalBirthDateInput.value = combineFieldValues(birthDateFields);
+        totalGenderInput.value = combineFieldValues(genderFields);
+        totalPassportNoInput.value = combineFieldValues(passportNoFields);
+        totalTckNoInput.value = combineFieldValues(tckNoFields);
+        totalTelNoInput.value = combineFieldValues(telNoFields);
+        totalEmailInput.value = combineFieldValues(emailFields);
+
+
+    //    let combinedNames = [];
+        //  nameFields.forEach(field => {
+        //    combinedNames.push(field.value);
+        //});
+
+        // Tüm değerleri birleştirip totalName alanına yazın
+        //totalNameInput.value = combinedNames.join('?');
+        //eğer dolduysa hidden olarak kutucukta birleştir
+       /* if (totalSurnameInput.value && totalBirthDateInput.value && totalGenderInput.value &&
+            totalPassportNoInput.value && totalTckNoInput.value && totalTelNoInput.value &&
+            totalEmailInput.value) {
+            document.getElementById('confirmBtn').hidden = true;
+            document.getElementById('continueBtn').hidden = false;
+        }*/
+
+
+        document.getElementById('confirmBtn').hidden = true;
+
+        //Tüm fieldları ortak bir yerde toplicaz
+        // 'İşleme Devam Et' butonunu göster
+        document.getElementById('continueBtn').hidden = false;
+    }
+
+
+</script>
+</body>
+</html>

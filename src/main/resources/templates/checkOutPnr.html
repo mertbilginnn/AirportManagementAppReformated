@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pnr Kontrol</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 15px;
+        }
+        .card-header {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        #confirm-btn {
+            width: 100px;
+        }
+        .text-primary {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        .text-success {
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-3 mb-5 bg-body-tertiary rounded">
+        <div class="card-body">
+            <div class="row">
+                <div  class="col-md-8">
+                    <h5 class="card-title text-primary">PNR NO:
+                        <span id="pnr" class="text-dark" th:text="${reservations.getFirst().pnr_code}"></span>
+                    </h5>
+                    <div  class="card my-3">
+                        <div class="card-header text-white bg-primary">
+                            Uçuş Bilgisi
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong th:text="${route.fromDestination} + ' - ' + ${route.toDestination}"></strong>
+                            </p>
+                            <p class="card-text" th:text="${flight.formattedDepartureDate}"></p>
+                        </div>
+                    </div>
+                    <div th:each="reservation : ${reservations}" class="card my-3">
+                        <div class="card-header text-white bg-secondary">
+                            Yolcu Bilgisi
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong th:text="${reservation.passenger.passengerName} + ' ' + ${reservation.passenger.passengerSurname}"></strong>
+                            </p>
+                            <p class="card-text" th:text="${#temporals.format(reservation.passenger.passengerBirthdate, 'dd.MM.yyyy')}"></p>
+                            <p class="card-text" th:text="${reservation.passenger.passengergender}"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h4 class="text-success">Toplam Ödeme:
+                        <span id="total-payment" class="text-dark" th:text="${price + ' TL'}"></span>
+                    </h4>
+                    <form th:action="@{/cancel-reservation}" method="post">
+                        <input type="hidden" name="pnrCode" th:value="${reservations.getFirst().pnr_code}"/>
+                        <button id="cancelBtn" type="submit" class="btn btn-danger btn-block">Rezervasyonu iptal et</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

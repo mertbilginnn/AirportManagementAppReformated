@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Uçak Bileti Arama</title>
+    <script type="text/javascript" th:src="@{/js/actions.js}"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2 class="text-center">Uçak Bileti Arama</h2>
+
+    <!-- Thymeleaf Form -->
+    <form th:action="@{/selectroutes}" th:object="${selectRoutesDataModel}" method="post">
+
+        <div class="form-row">
+            <!-- Nereden -->
+            <div class="form-group col-md-6">
+                <label for="nereden">Nereden</label>
+                <select th:field="*{fromDestination}" class="form-control" id="nereden" name="nereden" required>
+                    <option value="" disabled selected>Seçiniz...</option>
+                    <option th:each="fromRoute : ${fromRouteList}" th:value="${fromRoute}" th:text="${fromRoute}"></option>
+                </select>
+            </div>
+
+            <!-- Nereye -->
+            <div class="form-group col-md-6">
+                <label for="nereye">Nereye</label>
+                <select th:field="*{toDestination}" class="form-control" id="nereye" name="nereye" required>
+                    <option value="" disabled selected>Seçiniz...</option>
+                    <option th:each="toRoute : ${toRouteList}" th:value="${toRoute}" th:text="${toRoute}"></option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tek Yön / Çift Yön -->
+        <div class="form-group text-center">
+            <label>Uçuş Türü</label><br>
+            <div class="form-check form-check-inline">
+                <input th:field="*{flightType}" class="form-check-input" type="radio" name="ucusTuru" id="tekYon" value="tekYon" checked onclick="toggleDonusTarihi()">
+                <label class="form-check-label" for="tekYon">Tek Yön</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input th:field="*{flightType}" class="form-check-input" type="radio" name="ucusTuru" id="ciftYon" value="ciftYon" onclick="toggleDonusTarihi()">
+                <label class="form-check-label" for="ciftYon">Gidiş-Dönüş</label>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <!-- Gidiş Tarihi -->
+            <div class="form-group col-md-6">
+                <label for="gidisTarihi">Gidiş Tarihi</label>
+                <input th:field="*{departureDate}" type="date" class="form-control" id="gidisTarihi" name="gidisTarihi" required>
+            </div>
+
+            <!-- Dönüş Tarihi -->
+            <div id="donusTarihidiv" class="form-group col-md-6" hidden="hidden">
+                <label for="donusTarihi">Dönüş Tarihi</label>
+                <input th:field="*{returnDate}" type="date" class="form-control" id="donusTarihi" name="donusTarihi">
+            </div>
+        </div>
+
+        <!-- Yolcu Tipleri -->
+        <div class="form-row">
+            <!-- Yetişkin Yolcu -->
+            <div class="form-group col-md-4">
+                <label for="yetiskinYolcu">Yetişkin Yolcu Sayısı</label>
+                <input th:field="*{adultPassengerCount}" type="number" class="form-control" id="yetiskinYolcu" name="yetiskinYolcu" value="1" min="0" required>
+            </div>
+
+            <!-- Öğrenci Yolcu -->
+            <div class="form-group col-md-4">
+                <label for="ogrenciYolcu">Öğrenci Yolcu Sayısı</label>
+                <input th:field="*{studentPassengerCount}" type="number" class="form-control" id="ogrenciYolcu" name="ogrenciYolcu" value="0" min="0">
+            </div>
+
+            <!-- Engelli Yolcu -->
+            <div class="form-group col-md-4">
+                <label for="engelliYolcu">Engelli Yolcu Sayısı</label>
+                <input th:field="*{disabledPassengerCount}" type="number" class="form-control" id="engelliYolcu" name="engelliYolcu" value="0" min="0">
+            </div>
+        </div>
+
+        <!-- Hata Mesajı -->
+        <div id="error-message" class="alert alert-danger" role="alert" style="display: none;"></div>
+
+        <!-- Submit Butonu -->
+        <button type="submit" class="btn btn-primary btn-block">Bilet Ara</button>
+    </form>
+</div>
+
+<!-- Bootstrap JS and dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
