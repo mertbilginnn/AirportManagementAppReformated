@@ -83,6 +83,7 @@
                 <span th:text="${route.bussSeatPrice}"></span> TL
             </div>
         </div>
+
         <div class="row flight-seats">
             <div class="col-md-6">
                 <strong>Kalan ekonomi koltuklar: </strong>
@@ -96,10 +97,39 @@
         <div class="text-right">
             <a th:href="@{/PassengerInfo(flightId=${flight.getFlights_id()})}" class="btn btn-primary">Uçuşu Seç</a>
         </div>
+        <div class="alert alert-danger mt-2" style="display: none;"></div>
     </div>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const selectButtons = document.querySelectorAll(".btn-primary");
+
+        selectButtons.forEach(button => {
+            button.addEventListener("click", function(event) {
+                const flightCard = this.closest(".flight-card");
+                const radioButtons = flightCard.querySelectorAll('input[name="seatPrice"]');
+                const alertDiv = flightCard.querySelector('.alert-danger');
+                let seatSelected = false;
+
+                radioButtons.forEach(radio => {
+                    if (radio.checked) {
+                        seatSelected = true;
+                    }
+                });
+
+                if (!seatSelected) {
+                    event.preventDefault();
+                    alertDiv.textContent = "Lütfen bir koltuk sınıfı seçin!";
+                    alertDiv.style.display = "block";
+                } else {
+                    alertDiv.style.display = "none"; // Seçim yapılmışsa uyarıyı gizleyin
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
