@@ -23,6 +23,8 @@ public class Reservation {
 
     private String pnr_code;
 
+    private Double totalReservationPrice;
+
 
 
 

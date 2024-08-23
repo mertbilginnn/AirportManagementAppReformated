@@ -25,7 +25,7 @@ public class HomeController {
     private PassengerService passengerService;
     private ReservationService reservationService;
 
-    public HomeController(RouteService routeService , FlightsService flightsService , PassengerService passengerService, ReservationService reservationService) {
+    public HomeController(RouteService routeService, FlightsService flightsService, PassengerService passengerService, ReservationService reservationService) {
         this.routeService = routeService;
         this.flightsService = flightsService;
         this.passengerService = passengerService;
@@ -58,7 +58,7 @@ public class HomeController {
     }
 
     @PostMapping("/selectroutes")
-    public RedirectView selectRoutes(@ModelAttribute selectRoutesDataModel selectRoutesDataModel, HttpSession session){
+    public RedirectView selectRoutes(@ModelAttribute selectRoutesDataModel selectRoutesDataModel, HttpSession session) {
         //Bilet Processi
         String fromDestination = selectRoutesDataModel.getFromDestination();
         String toDestination = selectRoutesDataModel.getToDestination();
@@ -71,14 +71,14 @@ public class HomeController {
 
         // Veritabanından seçilen rotaya ve tarihe göre uçuşları çek
         Route route = routeService.findFlightsByRoute(fromDestination, toDestination).getFirst();
-        if (route  == null) {
+        if (route == null) {
             //TO DO yanlış girdin
             // Hata döndür böyle bir uçuş yok
             return new RedirectView("/selectroutes");
         }
 
 
-        return new RedirectView("/selectflights?routedata="+route.getRoute_id());
+        return new RedirectView("/selectflights?routedata=" + route.getRoute_id());
     }
 
 
@@ -91,50 +91,66 @@ public class HomeController {
 
 
     @GetMapping("/selectflights")
-    public String selectFlights(@RequestParam("routedata") Long routeId, Model model, HttpSession session) {
+    public String selectFlights(
+            @RequestParam("routedata") Long routeId,
+            Model model,
+            HttpSession session) {
         // Kullanıcının seçtiği rota bilgilerini al
 
         Route _route = routeService.findById(routeId).isPresent() ? routeService.findById(routeId).get() : null;
         List<Flights> flights = flightsService.findAllByRoute(_route);
 
+        int adultCount = (Integer) session.getAttribute("adultPassengerCount");
+        int studentCount = (Integer) session.getAttribute("studentPassengerCount");
+        int disabledCount = (Integer) session.getAttribute("disabledPassengerCount");
+        int totalPassengerCount = adultCount + studentCount + disabledCount;
 
 
         // Uçuş bilgilerini model'e ekle
+        model.addAttribute("totalPassengerCount", totalPassengerCount);
         model.addAttribute("route", _route);
         model.addAttribute("selectflights", flights);
-        session.setAttribute("selectedFlightId", flights.getFirst().getFlights_id());
+
         // Uçuş seçme sayfasına yönlendir
         return "selectFlights";
     }
 
 
     @GetMapping("/PassengerInfo")
-    public String showPassengerInfoForm(Model model, HttpSession session) {
+    public String showPassengerInfoForm(
+            Model model,
+            HttpSession session,
+            @RequestParam("flightId") Long flightId,
+            @RequestParam("price") Double price) {
+
         int adultCount = (Integer) session.getAttribute("adultPassengerCount");
         int studentCount = (Integer) session.getAttribute("studentPassengerCount");
         int disabledCount = (Integer) session.getAttribute("disabledPassengerCount");
 
-
+        session.setAttribute("flightsid",flightId);
+        session.setAttribute("price",price);
 
         // Model'e kişi sayısını ve rota bilgisini ekle
         model.addAttribute("passenger", new Passenger());
         model.addAttribute("adultCount", adultCount);
         model.addAttribute("studentCount", studentCount);
         model.addAttribute("disabledCount", disabledCount);
-        model.addAttribute("passengerDataModel",new passengerDataModel());
+        model.addAttribute("passengerDataModel", new passengerDataModel());
         return "PassengerInfo"; // HTML dosyasının adı
     }
+
     @PostMapping("/PassengerInfo")
     public String savePassengers(@ModelAttribute passengerDataModel passengerDataModel, HttpSession session) {
         List<Passenger> passengerList = passengerDataModel.getPassengerList();
 
         // Seçilen uçuş ID'sini session'dan alın
-        Long flights_id = (Long) session.getAttribute("selectedFlightId");
+        Long flights_id = (Long) session.getAttribute("flightsid");
+        Double price = (Double) session.getAttribute("price");
 
-        // İlk yolcu bilgisi
+                // İlk yolcu bilgisi
 
-        // Seçilen uçuş bilgisi
-        Flights flight = flightsService.findById(flights_id).orElseThrow(() -> new RuntimeException("Flight not found"));
+                // Seçilen uçuş bilgisi
+                Flights flight = flightsService.findById(flights_id).orElseThrow(() -> new RuntimeException("Flight not found"));
 
         // Kullanıcı bilgisi (örneğin oturumdaki kullanıcı)
 
@@ -145,12 +161,10 @@ public class HomeController {
             reservation.setPassenger(passenger);
             reservation.setFlights(flight);
             reservation.setPnr_code(commonPnrCode);
+            reservation.setTotalReservationPrice(price);
             this.reservationService.saveReservation(reservation);
 
         }
-
-
-
 
 
         // Rezervasyon ID'sini session'a ekleyin
@@ -168,13 +182,13 @@ public class HomeController {
         Flights flight = reservations.getFirst().getFlights();
         Route route = flight.getRoute();
 
-
+        Double price = (Double) session.getAttribute("price");
 
         // Model'e rezervasyon bilgisini ekleyin
         model.addAttribute("route", route);
         model.addAttribute("reservations", reservations);
         model.addAttribute("flight", flight);
-        model.addAttribute("price",400);
+        model.addAttribute("price", price);
 
 
         return "payment"; // payment.html sayfasına yönlendirir
@@ -198,13 +212,12 @@ public class HomeController {
         }
 
 
-
         model.addAttribute("reservations", reservations);
         model.addAttribute("flight", flight);
         model.addAttribute("route", route);
         model.addAttribute("passenger", passenger);
         model.addAttribute("pnrCode", pnrCode);
-        model.addAttribute("price",400);
+        model.addAttribute("price", reservations.getFirst().getTotalReservationPrice());
 
         return "checkOutPnr"; // checkOutPnr.html sayfasına yönlendirme
     }

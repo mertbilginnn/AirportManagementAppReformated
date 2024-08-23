@@ -74,13 +74,13 @@
         <div class="row flight-prices">
             <div class="col-md-6">
                 <strong>Ekonomi Ücreti:</strong>
-                <input type="radio" name="seatPrice" th:value="${route.ecoSeatPrice}">
-                <span th:text="${route.ecoSeatPrice}"></span> TL
+                <input type="radio" name="seatPrice" th:value="${route.ecoSeatPrice * totalPassengerCount}">
+                <span th:text="${route.ecoSeatPrice * totalPassengerCount}"></span> TL
             </div>
             <div class="col-md-6">
                 <strong>Bussiness Ücreti</strong>
-                <input type="radio" name="seatPrice" th:value="${route.bussSeatPrice}">
-                <span th:text="${route.bussSeatPrice}"></span> TL
+                <input type="radio" name="seatPrice" th:value="${route.bussSeatPrice * totalPassengerCount}">
+                <span th:text="${route.bussSeatPrice * totalPassengerCount}"></span> TL
             </div>
         </div>
 
@@ -95,7 +95,9 @@
             </div>
         </div>
         <div class="text-right">
-            <a th:href="@{/PassengerInfo(flightId=${flight.getFlights_id()})}" class="btn btn-primary">Uçuşu Seç</a>
+            <input id="hiddenFlightId" th:value="${flight.flights_id}" type="hidden">
+            <input id="hiddenUserCount" th:value="${totalPassengerCount}" type="hidden">
+            <a th:href="@{/PassengerInfo(flightId=${flight.flights_id})}" class="btn btn-primary">Uçuşu Seç</a>
         </div>
         <div class="alert alert-danger mt-2" style="display: none;"></div>
     </div>
@@ -106,6 +108,10 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const selectButtons = document.querySelectorAll(".btn-primary");
+        const hiddenFlightId = document.getElementById("hiddenFlightId").value;
+        const hiddenUserCountObject = document.getElementById("hiddenUserCount").value;
+        const radioButtons = document.querySelectorAll('input[name="seatPrice"]');
+        let totalPrice = 0;
 
         selectButtons.forEach(button => {
             button.addEventListener("click", function(event) {
@@ -117,6 +123,12 @@
                 radioButtons.forEach(radio => {
                     if (radio.checked) {
                         seatSelected = true;
+                        console.log(totalPrice)
+                        alert(button.href)
+                        let url = button.href + `&price=${totalPrice}`;
+                        button.href = url;
+                        //
+
                     }
                 });
 
@@ -129,6 +141,13 @@
                 }
             });
         });
+
+        radioButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                totalPrice = this.value
+            });
+        });
+
     });
 </script>
 </body>
