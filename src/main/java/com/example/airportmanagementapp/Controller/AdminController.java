@@ -27,8 +27,8 @@ public class AdminController {
     }
 
     @PostMapping("/addUser")
-    public String addUser(@RequestParam String username, @RequestParam String password) {
-        userService.saveUser(username, password);
+    public String addUser(@RequestParam String username, @RequestParam String password, @RequestParam int authNum) {
+        userService.saveUser(username, password, authNum);
 
         return "redirect:/manageUsers";
     }

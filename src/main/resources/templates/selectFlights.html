@@ -123,8 +123,6 @@
                 radioButtons.forEach(radio => {
                     if (radio.checked) {
                         seatSelected = true;
-                        console.log(totalPrice)
-                        alert(button.href)
                         let url = button.href + `&price=${totalPrice}`;
                         button.href = url;
                         //

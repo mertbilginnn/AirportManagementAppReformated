@@ -200,16 +200,17 @@ public class HomeController {
         List<Reservation> reservations = reservationService.findReservationBypnr(pnrCode);
 
 
-        // Rezervasyon ve ilgili uçuş bilgilerini modele ekle
-        Flights flight = reservations.getFirst().getFlights();
-        Route route = flight.getRoute();
-        Passenger passenger = reservations.getFirst().getPassenger();
-
         if (reservations.isEmpty()) {
             // Eğer rezervasyon bulunamazsa, hata mesajını ekleyip ana sayfaya yönlendirebiliriz
             model.addAttribute("error", "Rezervasyon bulunamadı.");
             return "index"; // Ana sayfa
         }
+
+
+        // Rezervasyon ve ilgili uçuş bilgilerini modele ekle
+        Flights flight = reservations.getFirst().getFlights();
+        Route route = flight.getRoute();
+        Passenger passenger = reservations.getFirst().getPassenger();
 
 
         model.addAttribute("reservations", reservations);

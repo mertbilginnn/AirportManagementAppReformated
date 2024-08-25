@@ -27,10 +27,11 @@ public class UserService {
     }
 
     // Yeni kullanıcı ekle
-    public void saveUser(String username, String password) {
+    public void saveUser(String username, String password, int authNum) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
+        user.setAuth_num(authNum);
         userRepository.save(user);
     }
 
