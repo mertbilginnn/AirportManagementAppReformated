@@ -12,10 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
+import org.springframework.web.util.UriComponentsBuilder;
 
-
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -64,6 +66,7 @@ public class HomeController {
         String toDestination = selectRoutesDataModel.getToDestination();
 
 
+
         session.setAttribute("adultPassengerCount", selectRoutesDataModel.getAdultPassengerCount());
         session.setAttribute("studentPassengerCount", selectRoutesDataModel.getStudentPassengerCount());
         session.setAttribute("disabledPassengerCount", selectRoutesDataModel.getDisabledPassengerCount());
@@ -77,8 +80,12 @@ public class HomeController {
             return new RedirectView("/selectroutes");
         }
 
+        String url = UriComponentsBuilder.fromPath("/selectflights")
+                .queryParam("routedata", route.getRoute_id())
+                .queryParam("flightdate",selectRoutesDataModel.getDepartureDate())
+                .toUriString();
 
-        return new RedirectView("/selectflights?routedata=" + route.getRoute_id());
+        return new RedirectView(url);
     }
 
 
@@ -93,12 +100,14 @@ public class HomeController {
     @GetMapping("/selectflights")
     public String selectFlights(
             @RequestParam("routedata") Long routeId,
+            @RequestParam("flightdate") LocalDate flightdate,
             Model model,
             HttpSession session) {
         // Kullanıcının seçtiği rota bilgilerini al
 
         Route _route = routeService.findById(routeId).isPresent() ? routeService.findById(routeId).get() : null;
         List<Flights> flights = flightsService.findAllByRoute(_route);
+        flights = flights.stream().filter(f -> f.getLocalDepartureDate().isEqual(flightdate)).collect(Collectors.toList());
 
         int adultCount = (Integer) session.getAttribute("adultPassengerCount");
         int studentCount = (Integer) session.getAttribute("studentPassengerCount");

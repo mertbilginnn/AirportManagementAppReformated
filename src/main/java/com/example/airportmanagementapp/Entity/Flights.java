@@ -6,6 +6,8 @@ import lombok.Data;
 
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Locale;
 
@@ -31,6 +33,10 @@ public class Flights {
         }
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM yyyy 'Saat:' HH:mm", new Locale("tr", "TR"));
         return sdf.format(deparatureDate);
+    }
+
+    public LocalDate getLocalDepartureDate() {
+        return this.getDeparatureDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
 }
