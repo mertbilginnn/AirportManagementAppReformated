@@ -45,6 +45,13 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
+    public void addUser(User user) {
+        user.setUsername(user.getUsername());
+        user.setPassword(user.getPassword());
+        user.setAuth_num(1); // Yeni kullanıcıyı normal kullanıcı olarak ayarla
+        userRepository.save(user);
+    }
+
 
 
 }

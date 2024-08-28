@@ -19,7 +19,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers("/showMyLoginPage").permitAll() // Herkesin erişebileceği sayfalar
+                                .requestMatchers("/showMyLoginPage","/register").permitAll() // Herkesin erişebileceği sayfalar
                                 .requestMatchers("/admin/manageUsers").hasAuthority("ADMIN") // Sadece ADMIN rolündeki kullanıcılar için
                                 .anyRequest().authenticated() // Diğer tüm sayfalar için kimlik doğrulaması gereksin
                 )
