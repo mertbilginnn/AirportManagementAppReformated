@@ -46,34 +46,36 @@
 <script>
     function addPassengerForms(totalPassengers) {
         const formContainer = document.getElementById("passengerForms");
-        const today = new Date().toISOString().split('T')[0];  // Bugünün tarihi
+        const today = new Date();
+        today.setDate(today.getDate() - 1);  // Bugünü bir gün geriye alıyoruz
+        const maxDate = today.toISOString().split('T')[0];  // Bir gün öncesinin tarihini alıyoruz
 
         for (let i = 0; i < totalPassengers; i++) {
             const formGroup = document.createElement("div");
             formGroup.className = "form-group";
             formGroup.innerHTML = `
-                    <h5>Yolcu ${i + 1}</h5>
-                    <label for="name${i}">İsim:</label>
-                    <input type="text" class="form-control" id="name${i}" name="passengers[${i}].passengerName" required placeholder="İsim girin">
-                    <label for="surname${i}">Soyisim:</label>
-                    <input type="text" class="form-control" id="surname${i}" name="passengers[${i}].passengerSurname" required placeholder="Soyisim girin">
-                    <label for="birthDate${i}">Doğum Tarihi:</label>
-                    <input type="date" class="form-control" id="birthDate${i}" name="passengers[${i}].passengerBirthdate" required max="${today}">
-                    <label for="gender${i}">Cinsiyet:</label>
-                    <select class="form-control custom-select" id="gender${i}" name="passengers[${i}].passengergender" required>
-                        <option value="" disabled selected>Cinsiyet seçiniz</option>
-                        <option value="Female">Kadın</option>
-                        <option value="Male">Erkek</option>
-                    </select>
-                    <label for="passportNo${i}">Pasaport No:</label>
-                    <input type="text" class="form-control" id="passportNo${i}" name="passengers[${i}].passportno" required placeholder="Pasaport no girin" pattern="^\\d{9}$" maxlength="9" title="Pasaport numarası 9 haneli olmalıdır.">
-                    <label for="nationalityNo${i}">Vatandaşlık No:</label>
-                    <input type="text" class="form-control" id="nationalityNo${i}" name="passengers[${i}].passengertckno" required placeholder="Vatandaşlık no girin" pattern="^\\d{11}$" maxlength="11" title="T.C. Kimlik numarası 11 haneli olmalıdır.">
-                    <label for="telNo${i}">Tel No:</label>
-                    <input type="text" class="form-control" id="telNo${i}" name="passengers[${i}].passengertelno" required placeholder="Tel no girin" pattern="^\\d{11}$" maxlength="11" title="Telefon numarası 11 haneli olmalıdır.">
-                    <label for="email${i}">E-mail:</label>
-                    <input type="email" class="form-control" id="email${i}" name="passengers[${i}].passengerEmail" required placeholder="E-mail girin">
-                `;
+                <h5>Yolcu ${i + 1}</h5>
+                <label for="name${i}">İsim:</label>
+                <input type="text" class="form-control" id="name${i}" name="passengers[${i}].passengerName" required placeholder="İsim girin">
+                <label for="surname${i}">Soyisim:</label>
+                <input type="text" class="form-control" id="surname${i}" name="passengers[${i}].passengerSurname" required placeholder="Soyisim girin">
+                <label for="birthDate${i}">Doğum Tarihi:</label>
+                <input type="date" class="form-control" id="birthDate${i}" name="passengers[${i}].passengerBirthdate" required max="${maxDate}">
+                <label for="gender${i}">Cinsiyet:</label>
+                <select class="form-control custom-select" id="gender${i}" name="passengers[${i}].passengergender" required>
+                    <option value="" disabled selected>Cinsiyet seçiniz</option>
+                    <option value="Female">Kadın</option>
+                    <option value="Male">Erkek</option>
+                </select>
+                <label for="passportNo${i}">Pasaport No:</label>
+                <input type="text" class="form-control" id="passportNo${i}" name="passengers[${i}].passportno" required placeholder="Pasaport no girin" pattern="^\\d{9}$" maxlength="9" title="Pasaport numarası 9 haneli olmalıdır.">
+                <label for="nationalityNo${i}">Vatandaşlık No:</label>
+                <input type="text" class="form-control" id="nationalityNo${i}" name="passengers[${i}].passengertckno" required placeholder="Vatandaşlık no girin" pattern="^\\d{11}$" maxlength="11" title="T.C. Kimlik numarası 11 haneli olmalıdır.">
+                <label for="telNo${i}">Tel No:</label>
+                <input type="text" class="form-control" id="telNo${i}" name="passengers[${i}].passengertelno" required placeholder="Tel no girin" pattern="^\\d{11}$" maxlength="11" title="Telefon numarası 11 haneli olmalıdır.">
+                <label for="email${i}">E-mail:</label>
+                <input type="email" class="form-control" id="email${i}" name="passengers[${i}].passengerEmail" required placeholder="E-mail girin">
+            `;
             formContainer.appendChild(formGroup);
         }
     }
